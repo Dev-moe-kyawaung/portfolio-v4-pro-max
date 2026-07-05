@@ -1,0 +1,31 @@
+name: Tailwind Fix
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Tailwind fix
+        run: bash scripts/fix-tailwind-v3.sh
+
+      - name: Upload Tailwind log
+        uses: actions/upload-artifact@v4
+        with:
+          name: tailwind-fix-log
+          path: logs/tailwind-check.log
+          if-no-files-found: warn
