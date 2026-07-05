@@ -1,0 +1,37 @@
+ name: Tailwind CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  clean-reinstall-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Clean workspace
+        run: npm run clean:ci
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Tailwind check
+        run: npm run check
+
+      - name: Upload Tailwind log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tailwind-ci-log
+          path: logs/tailwind-check.log
+          if-no-files-found: warn
